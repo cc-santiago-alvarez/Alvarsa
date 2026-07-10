@@ -33,9 +33,6 @@ export default function Header() {
 
   return (
     <>
-      <div style={{ background: '#141414', color: '#e9e9e5', fontSize: 12.5, textAlign: 'center', padding: '7px 12px', letterSpacing: '0.02em' }}>
-        {t.topbar}
-      </div>
       <header style={{ position: 'sticky', top: 0, zIndex: 40, background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(10px)', borderBottom: '1px solid var(--alv-line)' }}>
         <div className="alv-wrap" style={{ display: 'flex', alignItems: 'center', gap: 18, height: 68 }}>
           <Link href="/" aria-label="Alvarsa inicio"><Brand /></Link>

@@ -1,39 +1,47 @@
 'use client';
 import Link from 'next/link';
-import Brand from './Brand';
 import { useLang } from '@/providers/LangProvider';
 
 export default function Footer() {
   const { t } = useLang();
+
+  const nav = [
+    { href: '/', label: t.nav_home },
+    { href: '/catalogo', label: t.nav_catalog },
+    { href: '/taller', label: t.nav_about },
+    { href: '/contacto', label: t.nav_contact },
+  ];
+
   return (
     <footer style={{ background: '#141414', color: '#b9b9b4', marginTop: 40 }}>
-      <div className="alv-wrap" style={{ padding: '46px 20px 30px' }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 30, justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div style={{ maxWidth: 320 }}>
-            <Brand light />
-            <p style={{ marginTop: 14, fontSize: 14, lineHeight: 1.6 }}>{t.footer_addr}</p>
-            <p style={{ marginTop: 4, fontSize: 14 }}>{t.contact_hours}</p>
-          </div>
-          <div style={{ display: 'flex', gap: 54, flexWrap: 'wrap' }}>
-            <div>
-              <div style={{ color: '#fff', fontWeight: 700, marginBottom: 12, fontSize: 14 }}>{t.footer_contact}</div>
-              <ul style={{ display: 'grid', gap: 8, fontSize: 14, listStyle: 'none', padding: 0, margin: 0 }}>
-                <li><a href="mailto:taller@alvarsa.co" style={{ color: '#d6a81f' }}>taller@alvarsa.co</a></li>
-                <li><a href="tel:+576044482009" style={{ color: '#d6a81f' }}>+57 604 448 2009</a></li>
-                <li><a href="https://instagram.com/alvarsa" target="_blank" rel="noreferrer" style={{ color: '#d6a81f' }}>Instagram</a></li>
-              </ul>
-            </div>
-            <div>
-              <div style={{ color: '#fff', fontWeight: 700, marginBottom: 12, fontSize: 14 }}>Alvarsa</div>
-              <ul style={{ display: 'grid', gap: 8, fontSize: 14, listStyle: 'none', padding: 0, margin: 0 }}>
-                <li><Link href="/catalogo" style={{ color: '#b9b9b4' }}>{t.nav_catalog}</Link></li>
-                <li><Link href="/taller" style={{ color: '#b9b9b4' }}>{t.nav_about}</Link></li>
-                <li><Link href="/contacto" style={{ color: '#b9b9b4' }}>{t.nav_contact}</Link></li>
-              </ul>
-            </div>
-          </div>
+      <div className="alv-wrap" style={{ position: 'relative', padding: '52px 20px 34px', textAlign: 'center', overflow: 'hidden' }}>
+        {/* Nav centrada */}
+        <nav style={{ display: 'flex', gap: 26, justifyContent: 'center', flexWrap: 'wrap', position: 'relative', zIndex: 2 }}>
+          {nav.map((n) => (
+            <Link key={n.href} href={n.href} style={{ color: '#b9b9b4', fontSize: 14 }}>{n.label}</Link>
+          ))}
+        </nav>
+
+        {/* Contacto directo centrado */}
+        <div style={{ display: 'flex', gap: 22, justifyContent: 'center', flexWrap: 'wrap', marginTop: 14, position: 'relative', zIndex: 2 }}>
+          <a href="mailto:taller@alvarsa.co" style={{ color: '#d6a81f', fontSize: 14 }}>{t.footer_l_email}</a>
+          <a href="https://instagram.com/alvarsa" target="_blank" rel="noreferrer" style={{ color: '#d6a81f', fontSize: 14 }}>Instagram</a>
+          <a href="tel:+576044482009" style={{ color: '#d6a81f', fontSize: 14 }}>{t.footer_l_phone}</a>
         </div>
-        <div style={{ borderTop: '1px solid #2a2a2a', marginTop: 34, paddingTop: 18, fontSize: 13 }}>{t.footer_rights}</div>
+
+        {/* Marca de agua ALVARSA */}
+        <div style={{ position: 'relative', margin: '26px 0 20px', display: 'grid', placeItems: 'center', zIndex: 1 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/assets/brand-logo-white.webp"
+            alt="Alvarsa"
+            style={{ width: 'min(340px, 70%)', opacity: 0.1, userSelect: 'none', pointerEvents: 'none' }}
+            draggable={false}
+          />
+        </div>
+
+        {/* Copyright */}
+        <div style={{ fontSize: 12.5, color: '#7a7a75', position: 'relative', zIndex: 2 }}>{t.footer_rights}</div>
       </div>
     </footer>
   );
