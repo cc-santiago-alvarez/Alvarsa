@@ -17,6 +17,7 @@ const (
 	CollQuotes   = "quotes"
 	CollContacts = "contact_requests"
 	GridFSBucket = "images" // prefijo del bucket → images.files / images.chunks
+	GridFSModels = "models" // prefijo del bucket de modelos 3D → models.files / models.chunks
 )
 
 // Connect abre la conexión a MongoDB, verifica con Ping y devuelve el handle de

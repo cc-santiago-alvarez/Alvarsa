@@ -31,10 +31,14 @@ func roleFrom(ctx context.Context) domain.Role {
 	return domain.RoleCustomer
 }
 
-// cors habilita CORS con credenciales para el origen del frontend.
+// cors habilita CORS con credenciales. Como se usan cookies, el header
+// Access-Control-Allow-Origin no puede ser "*": se refleja el Origin de la
+// petición solo si está en la lista permitida (así funcionan localhost y la IP LAN).
 func (s *Server) cors(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", s.cfg.CORSOrigin)
+		if origin := r.Header.Get("Origin"); s.originAllowed(origin) {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+		}
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Vary", "Origin")
 		if r.Method == http.MethodOptions {
@@ -45,6 +49,19 @@ func (s *Server) cors(next http.Handler) http.Handler {
 		}
 		next.ServeHTTP(w, r)
 	})
+}
+
+// originAllowed indica si el Origin está en la lista de CORS permitidos.
+func (s *Server) originAllowed(origin string) bool {
+	if origin == "" {
+		return false
+	}
+	for _, o := range s.cfg.CORSOrigins {
+		if o == origin {
+			return true
+		}
+	}
+	return false
 }
 
 // resolveSession intenta autenticar la sesión desde la cookie SIN exigirla, e

@@ -41,6 +41,7 @@ func main() {
 	quoteRepo := mongoadapter.NewQuoteRepo(db)
 	contactRepo := mongoadapter.NewContactRepo(db)
 	imageStore := mongoadapter.NewImageStore(db)
+	modelStore := mongoadapter.NewModelStore(db)
 	hasher := auth.NewBcryptHasher(0)
 
 	// Servicios (casos de uso).
@@ -52,6 +53,7 @@ func main() {
 	quoteSvc := services.NewQuote(quoteRepo)
 	contactSvc := services.NewContact(contactRepo)
 	imageSvc := services.NewImage(imageStore)
+	modelSvc := services.NewModel(modelStore)
 
 	// Adaptador HTTP (driving).
 	srv := httpadapter.NewServer(httpadapter.Deps{
@@ -63,6 +65,7 @@ func main() {
 		Quotes:          quoteSvc,
 		Contacts:        contactSvc,
 		Images:          imageSvc,
+		Models:          modelSvc,
 		Config:          cfg,
 	})
 

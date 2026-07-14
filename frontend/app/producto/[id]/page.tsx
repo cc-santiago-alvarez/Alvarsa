@@ -7,7 +7,7 @@ import { useCategories, catLabel } from '@/lib/useCategories';
 import { useLang } from '@/providers/LangProvider';
 import { useCart } from '@/providers/CartProvider';
 import { useUI } from '@/providers/UIProvider';
-import { imageUrl } from '@/lib/api';
+import { imageUrl, modelUrl } from '@/lib/api';
 import { OPTS, type OptAxis } from '@/lib/opts';
 import { money } from '@/lib/format';
 import ProductImage from '@/components/ProductImage';
@@ -87,13 +87,28 @@ export default function ProductPage() {
         <div>
           <div style={{ position: 'relative' }}>
             <ProductImage imageId={mainImage} alt={product.name} style={{ aspectRatio: '4 / 3.4', borderRadius: 20, border: '1px solid var(--alv-line)' }} />
-            <button
-              onClick={() => openAr(mainImage ? imageUrl(mainImage) : '')}
-              className="alv-btn-dark"
-              style={{ position: 'absolute', bottom: 14, right: 14, padding: '9px 16px', fontSize: 14 }}
-            >
-              AR
-            </button>
+            {product.model3d?.glbId && (
+              <button
+                onClick={() =>
+                  openAr({
+                    glbUrl: modelUrl(product.model3d!.glbId),
+                    usdzUrl: product.model3d!.usdzId ? modelUrl(product.model3d!.usdzId) : undefined,
+                    posterUrl: product.model3d!.posterId
+                      ? imageUrl(product.model3d!.posterId)
+                      : mainImage
+                        ? imageUrl(mainImage)
+                        : undefined,
+                    name: product.name,
+                    alt: product.name,
+                  })
+                }
+                className="alv-btn-dark"
+                aria-label={t.pd_ar}
+                style={{ position: 'absolute', bottom: 14, right: 14, padding: '9px 16px', fontSize: 14 }}
+              >
+                AR
+              </button>
+            )}
           </div>
           {product.imageIds.length > 1 && (
             <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>

@@ -24,6 +24,15 @@ type adminFieldsDoc struct {
 	SupplierRef   string `bson:"supplier_ref"`
 }
 
+type model3DDoc struct {
+	GLBID    string  `bson:"glb_id"`
+	USDZID   string  `bson:"usdz_id"`
+	PosterID string  `bson:"poster_id"`
+	WidthCM  float64 `bson:"width_cm"`
+	HeightCM float64 `bson:"height_cm"`
+	DepthCM  float64 `bson:"depth_cm"`
+}
+
 type productDoc struct {
 	ID            string           `bson:"_id"`
 	Name          string           `bson:"name"`
@@ -36,6 +45,7 @@ type productDoc struct {
 	DescriptionEN string           `bson:"description_en"`
 	ImageIDs      []string         `bson:"image_ids"`
 	Customization customizationDoc `bson:"customization"`
+	Model3D       model3DDoc       `bson:"model3d"`
 	Admin         adminFieldsDoc   `bson:"admin"`
 	Custom        bool             `bson:"custom"`
 	IsRemove      bool             `bson:"is_remove"`
@@ -56,6 +66,7 @@ func productToDoc(p domain.Product) productDoc {
 		DescriptionEN: p.DescriptionEN,
 		ImageIDs:      p.ImageIDs,
 		Customization: customizationDoc(p.Customization),
+		Model3D:       model3DDoc(p.Model3D),
 		Admin:         adminFieldsDoc(p.Admin),
 		Custom:        p.Custom,
 		IsRemove:      p.IsRemove,
@@ -77,6 +88,7 @@ func (d productDoc) toDomain() domain.Product {
 		DescriptionEN: d.DescriptionEN,
 		ImageIDs:      d.ImageIDs,
 		Customization: domain.Customization(d.Customization),
+		Model3D:       domain.Model3D(d.Model3D),
 		Admin:         domain.AdminFields(d.Admin),
 		Custom:        d.Custom,
 		IsRemove:      d.IsRemove,

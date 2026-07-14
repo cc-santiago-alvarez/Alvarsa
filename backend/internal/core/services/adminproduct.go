@@ -51,6 +51,7 @@ func (s *AdminProduct) Create(ctx context.Context, in ports.ProductInput) (domai
 		DescriptionEN: in.DescriptionEN,
 		ImageIDs:      in.ImageIDs,
 		Customization: in.Customization,
+		Model3D:       in.Model3D,
 		Admin:         in.Admin,
 		Custom:        true,
 		CreatedAt:     now,
@@ -77,6 +78,7 @@ func (s *AdminProduct) Update(ctx context.Context, id string, in ports.ProductIn
 	existing.DescriptionEN = in.DescriptionEN
 	existing.ImageIDs = in.ImageIDs
 	existing.Customization = in.Customization
+	existing.Model3D = in.Model3D
 	existing.Admin = in.Admin
 	existing.UpdatedAt = s.now()
 	return s.products.Update(ctx, existing)

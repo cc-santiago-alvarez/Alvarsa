@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -14,7 +15,7 @@ type Config struct {
 	MongoURI          string
 	MongoDB           string
 	HTTPAddr          string
-	CORSOrigin        string
+	CORSOrigins       []string // lista de orígenes permitidos (CORS con credenciales)
 	SessionTTL        time.Duration
 	SessionCookieName string
 	CookieSecure      bool
@@ -34,7 +35,7 @@ func Load() Config {
 		MongoURI:          env("MONGO_URI", "mongodb://localhost:27017"),
 		MongoDB:           env("MONGO_DB", "alvarsa"),
 		HTTPAddr:          env("HTTP_ADDR", ":8080"),
-		CORSOrigin:        env("CORS_ORIGIN", "http://localhost:3000"),
+		CORSOrigins:       envList("CORS_ORIGIN", "http://localhost:3000"),
 		SessionTTL:        time.Duration(ttlHours) * time.Hour,
 		SessionCookieName: env("SESSION_COOKIE_NAME", "alv_session"),
 		CookieSecure:      envBool("COOKIE_SECURE", false),
@@ -48,6 +49,19 @@ func env(key, def string) string {
 		return v
 	}
 	return def
+}
+
+// envList lee una lista separada por comas (orígenes CORS), recortando espacios
+// y descartando vacíos. Permite varios orígenes (p. ej. localhost y la IP LAN).
+func envList(key, def string) []string {
+	parts := strings.Split(env(key, def), ",")
+	out := make([]string, 0, len(parts))
+	for _, p := range parts {
+		if p = strings.TrimSpace(p); p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
 }
 
 func envInt(key string, def int) int {

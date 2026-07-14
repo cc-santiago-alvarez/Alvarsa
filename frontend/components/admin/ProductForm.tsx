@@ -4,7 +4,7 @@ import { useLang } from '@/providers/LangProvider';
 import { useCategories } from '@/lib/useCategories';
 import { OPTS, ALL_METAL, ALL_MADERA, ALL_MEDIDA, type OptAxis } from '@/lib/opts';
 import { createProduct, updateProduct } from '@/lib/products';
-import { uploadImage } from '@/lib/orders';
+import { uploadImage, uploadModel } from '@/lib/orders';
 import { ApiError, imageUrl } from '@/lib/api';
 import { IconImage, IconClose, IconCube } from '@/components/icons';
 import type { Product, ProductInput } from '@/lib/types';
@@ -23,6 +23,7 @@ function emptyState() {
     name: '', price: '', dims: '', categoryId: '',
     materialsEs: '', materialsEn: '', descriptionEs: '', descriptionEn: '',
     imageIds: [] as string[],
+    glbId: '', usdzId: '',
     customization: { metal: [...ALL_METAL], madera: [...ALL_MADERA], medida: [...ALL_MEDIDA] } as Record<OptAxis, string[]>,
     internalCost: '', workshopNotes: '', supplierRef: '',
   };
@@ -43,6 +44,7 @@ export default function ProductForm({ editing, onSaved, onCancel }: Props) {
         materialsEs: editing.materialsEs, materialsEn: editing.materialsEn,
         descriptionEs: editing.descriptionEs, descriptionEn: editing.descriptionEn,
         imageIds: [...editing.imageIds],
+        glbId: editing.model3d?.glbId || '', usdzId: editing.model3d?.usdzId || '',
         customization: {
           metal: editing.customization.metal.length ? [...editing.customization.metal] : [],
           madera: editing.customization.madera.length ? [...editing.customization.madera] : [],
@@ -86,6 +88,20 @@ export default function ProductForm({ editing, onSaved, onCancel }: Props) {
     setF((s) => ({ ...s, imageIds: s.imageIds.filter((x) => x !== id) }));
   }
 
+  async function onModelFile(kind: 'glb' | 'usdz', file: File | undefined) {
+    if (!file) return;
+    setUploading(true);
+    setError('');
+    try {
+      const res = await uploadModel(file);
+      setF((s) => ({ ...s, [kind === 'glb' ? 'glbId' : 'usdzId']: res.id }));
+    } catch (err) {
+      setError(err instanceof ApiError ? err.code : t.adm_err_save);
+    } finally {
+      setUploading(false);
+    }
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
@@ -105,6 +121,7 @@ export default function ProductForm({ editing, onSaved, onCancel }: Props) {
       descriptionEn: f.descriptionEn.trim(),
       imageIds: f.imageIds,
       customization: f.customization,
+      model3d: { glbId: f.glbId, usdzId: f.usdzId, posterId: '', widthCm: 0, heightCm: 0, depthCm: 0 },
       admin: {
         internalCost: parseInt(f.internalCost, 10) || 0,
         workshopNotes: f.workshopNotes.trim(),
@@ -169,8 +186,32 @@ export default function ProductForm({ editing, onSaved, onCancel }: Props) {
         )}
       </Section>
 
-      {/* 3. Personalización */}
-      <Section n={3} title={t.adm_section_custom} sub={t.adm_section_custom_sub}>
+      {/* 3. Modelo 3D (AR) */}
+      <Section n={3} title={t.adm_section_model} sub={t.adm_section_model_sub}>
+        <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+          <ModelSlot
+            label={t.adm_model_glb}
+            btn={t.adm_model_glb_btn}
+            accept=".glb,model/gltf-binary"
+            loaded={!!f.glbId}
+            loadedLabel={t.adm_model_loaded}
+            onPick={(file) => onModelFile('glb', file)}
+            onRemove={() => setF((s) => ({ ...s, glbId: '' }))}
+          />
+          <ModelSlot
+            label={t.adm_model_usdz}
+            btn={t.adm_model_usdz_btn}
+            accept=".usdz,model/vnd.usdz+zip"
+            loaded={!!f.usdzId}
+            loadedLabel={t.adm_model_loaded}
+            onPick={(file) => onModelFile('usdz', file)}
+            onRemove={() => setF((s) => ({ ...s, usdzId: '' }))}
+          />
+        </div>
+      </Section>
+
+      {/* 4. Personalización */}
+      <Section n={4} title={t.adm_section_custom} sub={t.adm_section_custom_sub}>
         {AXES.map((axis) => (
           <div key={axis} style={{ marginBottom: 14 }}>
             <div className="alv-label" style={{ marginBottom: 8 }}>{OPTS[axis][lang]}</div>
@@ -215,6 +256,31 @@ function Section({ n, title, sub, icon, children }: { n: number; title: string; 
       </div>
       {sub && <p style={{ color: '#8c8c8c', fontSize: 13.5, marginTop: 6, marginLeft: 36 }}>{sub}</p>}
       <div style={{ marginTop: 16 }}>{children}</div>
+    </div>
+  );
+}
+function ModelSlot({ label, btn, accept, loaded, loadedLabel, onPick, onRemove }: {
+  label: string; btn: string; accept: string; loaded: boolean; loadedLabel: string;
+  onPick: (file: File | undefined) => void; onRemove: () => void;
+}) {
+  return (
+    <div style={{ border: '2px dashed var(--alv-line)', borderRadius: 14, padding: 16, background: 'var(--alv-panel)' }}>
+      <div className="alv-label" style={{ marginBottom: 8 }}>{label}</div>
+      {loaded ? (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#2e7d32', fontSize: 13.5 }}>
+            <IconCube size={16} /> {loadedLabel}
+          </span>
+          <button type="button" onClick={onRemove} aria-label="Quitar" style={{ marginLeft: 'auto', width: 26, height: 26, borderRadius: 999, border: 'none', background: '#141414', color: '#fff', display: 'grid', placeItems: 'center', cursor: 'pointer' }}>
+            <IconClose size={13} />
+          </button>
+        </div>
+      ) : (
+        <label style={{ display: 'inline-block', cursor: 'pointer' }}>
+          <span className="alv-btn-dark" style={{ pointerEvents: 'none' }}>{btn}</span>
+          <input type="file" accept={accept} hidden onChange={(e) => onPick(e.target.files?.[0])} />
+        </label>
+      )}
     </div>
   );
 }

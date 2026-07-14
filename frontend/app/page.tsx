@@ -5,7 +5,7 @@ import { getProducts } from '@/lib/products';
 import { useCategories, catLabel } from '@/lib/useCategories';
 import { useLang } from '@/providers/LangProvider';
 import { useUI } from '@/providers/UIProvider';
-import { imageUrl } from '@/lib/api';
+import { imageUrl, modelUrl } from '@/lib/api';
 import ProductCard from '@/components/ProductCard';
 import ProductImage from '@/components/ProductImage';
 import type { Product } from '@/lib/types';
@@ -25,6 +25,8 @@ export default function HomePage() {
   const withImg = products.find((p) => p.imageIds?.length > 0);
   const hero = withImg || products[0];
   const moment = withImg || products[0];
+  // Para la banda AR necesitamos una pieza que tenga modelo 3D subido.
+  const arHero = products.find((p) => p.model3d?.glbId);
   const countByCat = (id: string) => products.filter((p) => p.categoryId === id).length;
   const catImage = (id: string) => products.find((p) => p.categoryId === id && p.imageIds?.length > 0)?.imageIds[0];
 
@@ -97,12 +99,31 @@ export default function HomePage() {
           <span className="alv-kicker" style={{ color: '#e0b23c' }}>{t.arband_kicker}</span>
           <h2 className="font-display" style={{ fontWeight: 800, fontSize: 'clamp(24px, 4vw, 34px)', marginTop: 12, lineHeight: 1.15, maxWidth: 460 }}>{t.arband_title}</h2>
           <p style={{ marginTop: 12, color: '#c9c9c4', maxWidth: 560, lineHeight: 1.6 }}>{t.arband_sub}</p>
-          <button
-            onClick={() => openAr(hero?.imageIds?.[0] ? imageUrl(hero.imageIds[0]) : '')}
-            className="alv-btn-gold" style={{ marginTop: 22 }}
-          >
-            {t.arband_cta}
-          </button>
+          {arHero ? (
+            <button
+              onClick={() =>
+                openAr({
+                  glbUrl: modelUrl(arHero.model3d!.glbId),
+                  usdzUrl: arHero.model3d!.usdzId ? modelUrl(arHero.model3d!.usdzId) : undefined,
+                  posterUrl: arHero.model3d!.posterId
+                    ? imageUrl(arHero.model3d!.posterId)
+                    : arHero.imageIds?.[0]
+                      ? imageUrl(arHero.imageIds[0])
+                      : undefined,
+                  name: arHero.name,
+                  alt: arHero.name,
+                })
+              }
+              className="alv-btn-gold"
+              style={{ marginTop: 22 }}
+            >
+              {t.arband_cta}
+            </button>
+          ) : (
+            <Link href="/catalogo" className="alv-btn-gold" style={{ marginTop: 22, display: 'inline-block' }}>
+              {t.arband_cta}
+            </Link>
+          )}
         </div>
       </section>
 

@@ -18,6 +18,7 @@ type Server struct {
 	quotes          ports.QuoteService
 	contacts        ports.ContactService
 	images          ports.ImageService
+	models          ports.ModelService
 	cfg             config.Config
 }
 
@@ -31,6 +32,7 @@ type Deps struct {
 	Quotes          ports.QuoteService
 	Contacts        ports.ContactService
 	Images          ports.ImageService
+	Models          ports.ModelService
 	Config          config.Config
 }
 
@@ -44,6 +46,7 @@ func NewServer(d Deps) *Server {
 		quotes:          d.Quotes,
 		contacts:        d.Contacts,
 		images:          d.Images,
+		models:          d.Models,
 		cfg:             d.Config,
 	}
 }

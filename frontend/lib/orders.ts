@@ -15,3 +15,11 @@ export function uploadImage(file: File): Promise<UploadResult> {
   fd.append('file', file);
   return apiFetch<UploadResult>('/uploads', { method: 'POST', body: fd });
 }
+
+// Admin: sube un modelo 3D (.glb/.usdz, multipart campo `file`) al bucket de
+// modelos y devuelve el id de GridFS. El content-type lo deriva el backend.
+export function uploadModel(file: File): Promise<UploadResult> {
+  const fd = new FormData();
+  fd.append('file', file);
+  return apiFetch<UploadResult>('/model-uploads', { method: 'POST', body: fd });
+}

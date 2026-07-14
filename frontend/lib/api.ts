@@ -74,3 +74,10 @@ export async function apiFetch<T>(path: string, opts: FetchOpts = {}): Promise<T
 export function imageUrl(id: string): string {
   return `${BASE}/api/images/${id}`;
 }
+
+// URL absoluta de un modelo 3D (.glb/.usdz) servido por el backend. Debe ser
+// alcanzable desde el dispositivo (no localhost) para que Scene Viewer/Quick Look
+// puedan descargarlo en AR.
+export function modelUrl(id: string): string {
+  return `${BASE}/api/models/${id}`;
+}

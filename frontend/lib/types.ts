@@ -20,6 +20,18 @@ export interface AdminFields {
   supplierRef: string;
 }
 
+// Modelo 3D para realidad aumentada. Solo presente en el producto si tiene .glb.
+// Espejo de model3DDTO del backend. La escala física la lleva el propio .glb;
+// las dimensiones en cm son informativas.
+export interface Model3D {
+  glbId: string; // id GridFS del .glb (Android/web)
+  usdzId: string; // id GridFS del .usdz (AR iOS); "" si no hay
+  posterId: string; // id de imagen como póster; "" si no hay
+  widthCm: number;
+  heightCm: number;
+  depthCm: number;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -32,6 +44,7 @@ export interface Product {
   descriptionEn: string;
   imageIds: string[];
   customization: Customization;
+  model3d?: Model3D; // solo presente si el producto tiene .glb
   custom: boolean;
   admin?: AdminFields; // solo presente con sesión admin
 }
@@ -101,5 +114,6 @@ export interface ProductInput {
   descriptionEn: string;
   imageIds: string[];
   customization: Customization;
+  model3d?: Model3D;
   admin?: AdminFields;
 }

@@ -23,6 +23,14 @@ type productRequest struct {
 		Madera []string `json:"madera"`
 		Medida []string `json:"medida"`
 	} `json:"customization"`
+	Model3D struct {
+		GLBID    string  `json:"glbId"`
+		USDZID   string  `json:"usdzId"`
+		PosterID string  `json:"posterId"`
+		WidthCM  float64 `json:"widthCm"`
+		HeightCM float64 `json:"heightCm"`
+		DepthCM  float64 `json:"depthCm"`
+	} `json:"model3d"`
 	Admin struct {
 		InternalCost  int64  `json:"internalCost"`
 		WorkshopNotes string `json:"workshopNotes"`
@@ -42,6 +50,7 @@ func (req productRequest) toInput() ports.ProductInput {
 		DescriptionEN: req.DescriptionEN,
 		ImageIDs:      req.ImageIDs,
 		Customization: domain.Customization{Metal: req.Customization.Metal, Madera: req.Customization.Madera, Medida: req.Customization.Medida},
+		Model3D:       domain.Model3D{GLBID: req.Model3D.GLBID, USDZID: req.Model3D.USDZID, PosterID: req.Model3D.PosterID, WidthCM: req.Model3D.WidthCM, HeightCM: req.Model3D.HeightCM, DepthCM: req.Model3D.DepthCM},
 		Admin:         domain.AdminFields{InternalCost: req.Admin.InternalCost, WorkshopNotes: req.Admin.WorkshopNotes, SupplierRef: req.Admin.SupplierRef},
 	}
 }

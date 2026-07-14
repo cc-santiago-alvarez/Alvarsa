@@ -1,0 +1,5 @@
+packages:
+  - .
+# Evita que pnpm relance `install` antes de cada script (pnpm dev/build); ese
+# pre-chequeo fallaba en modo no interactivo por build scripts pendientes de aprobar.
+verifyDepsBeforeRun: false

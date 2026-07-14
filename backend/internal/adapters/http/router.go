@@ -26,6 +26,11 @@ func (s *Server) routes() *http.ServeMux {
 	mux.HandleFunc("GET /api/images/{id}", s.handleGetImage)
 	mux.HandleFunc("POST /api/uploads", s.requireAdmin(s.handleUploadImage))
 
+	// Modelos 3D (AR): lectura pública (Scene Viewer/Quick Look la piden sin
+	// cookie), subida admin.
+	mux.HandleFunc("GET /api/models/{id}", s.handleGetModel)
+	mux.HandleFunc("POST /api/model-uploads", s.requireAdmin(s.handleUploadModel))
+
 	// Formularios públicos
 	mux.HandleFunc("POST /api/quotes", s.handleCreateQuote)
 	mux.HandleFunc("POST /api/contact", s.handleCreateContact)

@@ -11,6 +11,20 @@ type Customization struct {
 	Medida []string
 }
 
+// Model3D referencia los binarios de realidad aumentada de una pieza, subidos por
+// el admin y servidos desde GridFS (bucket "models"). Es información pública: el
+// frontend la necesita para renderizar el AR. Si GLBID está vacío, el producto no
+// tiene modelo 3D (el frontend no muestra el botón AR). La escala física la lleva
+// el propio .glb; las dimensiones en cm son informativas.
+type Model3D struct {
+	GLBID    string  // id GridFS del .glb (Android/web); vacío ⇒ sin AR
+	USDZID   string  // id GridFS del .usdz (AR iOS); opcional
+	PosterID string  // id de imagen (bucket images) como póster de carga; opcional
+	WidthCM  float64 // dimensiones reales informativas
+	HeightCM float64
+	DepthCM  float64
+}
+
 // AdminFields agrupa la información interna del taller que SOLO el admin puede ver.
 // Nunca se expone a usuarios generales ni anónimos (RBAC a nivel de campo).
 type AdminFields struct {
@@ -33,7 +47,8 @@ type Product struct {
 	DescriptionEN string
 	ImageIDs      []string // ids de GridFS
 	Customization Customization
-	Custom        bool // pieza creada por el admin (equivalente al flag _custom del prototipo)
+	Model3D       Model3D // modelo 3D para AR (público); vacío si no tiene
+	Custom        bool    // pieza creada por el admin (equivalente al flag _custom del prototipo)
 
 	Admin AdminFields // campos admin-only
 

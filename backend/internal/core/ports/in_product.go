@@ -18,6 +18,7 @@ type ProductInput struct {
 	DescriptionEN string
 	ImageIDs      []string
 	Customization domain.Customization
+	Model3D       domain.Model3D
 	Admin         domain.AdminFields
 }
 

@@ -11,6 +11,18 @@ type customizationDTO struct {
 	Medida []string `json:"medida"`
 }
 
+// model3DDTO expone las referencias del modelo 3D para AR. Se serializa solo
+// cuando el producto tiene .glb (puntero omitempty), así el frontend detecta la
+// presencia de modelo por la existencia del bloque.
+type model3DDTO struct {
+	GLBID    string  `json:"glbId"`
+	USDZID   string  `json:"usdzId"`
+	PosterID string  `json:"posterId"`
+	WidthCM  float64 `json:"widthCm"`
+	HeightCM float64 `json:"heightCm"`
+	DepthCM  float64 `json:"depthCm"`
+}
+
 // adminFieldsDTO son los campos internos; solo se incluye para admins.
 type adminFieldsDTO struct {
 	InternalCost  int64  `json:"internalCost"`
@@ -30,7 +42,9 @@ type productDTO struct {
 	DescriptionEN string           `json:"descriptionEn"`
 	ImageIDs      []string         `json:"imageIds"`
 	Customization customizationDTO `json:"customization"`
-	Custom        bool             `json:"custom"`
+	// Model3D solo se serializa cuando el producto tiene .glb.
+	Model3D *model3DDTO `json:"model3d,omitempty"`
+	Custom  bool        `json:"custom"`
 	// Admin solo se serializa (no-nil) cuando el solicitante es admin.
 	Admin *adminFieldsDTO `json:"admin,omitempty"`
 }
@@ -55,6 +69,16 @@ func toProductDTO(p domain.Product, includeAdmin bool) productDTO {
 			Medida: emptyIfNil(p.Customization.Medida),
 		},
 		Custom: p.Custom,
+	}
+	if p.Model3D.GLBID != "" {
+		dto.Model3D = &model3DDTO{
+			GLBID:    p.Model3D.GLBID,
+			USDZID:   p.Model3D.USDZID,
+			PosterID: p.Model3D.PosterID,
+			WidthCM:  p.Model3D.WidthCM,
+			HeightCM: p.Model3D.HeightCM,
+			DepthCM:  p.Model3D.DepthCM,
+		}
 	}
 	if includeAdmin {
 		dto.Admin = &adminFieldsDTO{
