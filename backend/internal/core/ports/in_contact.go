@@ -10,6 +10,7 @@ import (
 type ContactInput struct {
 	Name        string
 	Phone       string
+	Email       string
 	Reason      string
 	Attachments []string
 }

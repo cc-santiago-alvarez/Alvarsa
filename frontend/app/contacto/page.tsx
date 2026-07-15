@@ -5,7 +5,7 @@ import { createContact } from '@/lib/orders';
 
 export default function ContactoPage() {
   const { t } = useLang();
-  const [form, setForm] = useState({ name: '', phone: '', reason: '' });
+  const [form, setForm] = useState({ name: '', phone: '', email: '', reason: '' });
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -20,7 +20,7 @@ export default function ContactoPage() {
     setBusy(true);
     try {
       // Nota: los adjuntos requieren subida admin (GridFS); el formulario público envía sin attachments.
-      await createContact({ name: form.name.trim(), phone: form.phone.trim(), reason: form.reason.trim(), attachments: [] });
+      await createContact({ name: form.name.trim(), phone: form.phone.trim(), email: form.email.trim(), reason: form.reason.trim(), attachments: [] });
       setSent(true);
     } catch {
       setError(t.contact_error);
@@ -42,7 +42,7 @@ export default function ContactoPage() {
             <div style={{ textAlign: 'center', padding: '20px 0' }}>
               <div className="font-display" style={{ fontWeight: 800, fontSize: 24, color: '#141414' }}>{t.contact_sent_t}</div>
               <p style={{ color: '#6e6e6e', marginTop: 10 }}>{t.contact_sent_d}</p>
-              <button className="alv-btn-dark" style={{ marginTop: 18 }} onClick={() => { setSent(false); setForm({ name: '', phone: '', reason: '' }); }}>{t.contact_sent_btn}</button>
+              <button className="alv-btn-dark" style={{ marginTop: 18 }} onClick={() => { setSent(false); setForm({ name: '', phone: '', email: '', reason: '' }); }}>{t.contact_sent_btn}</button>
             </div>
           ) : (
             <form onSubmit={submit} style={{ display: 'grid', gap: 16 }}>
@@ -51,6 +51,9 @@ export default function ContactoPage() {
               </Field>
               <Field label={t.contact_phone_label}>
                 <input className="alv-input" placeholder={t.contact_phone_ph} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+              </Field>
+              <Field label={t.contact_email_label}>
+                <input className="alv-input" type="email" placeholder={t.contact_email_ph} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
               </Field>
               <Field label={t.contact_reason_label}>
                 <textarea className="alv-input" rows={5} placeholder={t.contact_reason_ph} value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} style={{ resize: 'vertical' }} />

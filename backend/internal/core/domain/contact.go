@@ -8,6 +8,7 @@ type ContactRequest struct {
 	ID          string
 	Name        string
 	Phone       string
+	Email       string
 	Reason      string
 	Attachments []string // ids de GridFS
 	IsRemove    bool

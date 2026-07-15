@@ -284,6 +284,7 @@ type contactReqDoc struct {
 	ID          string    `bson:"_id"`
 	Name        string    `bson:"name"`
 	Phone       string    `bson:"phone"`
+	Email       string    `bson:"email"`
 	Reason      string    `bson:"reason"`
 	Attachments []string  `bson:"attachments"`
 	IsRemove    bool      `bson:"is_remove"`
@@ -296,6 +297,7 @@ func contactToDoc(c domain.ContactRequest) contactReqDoc {
 		ID:          c.ID,
 		Name:        c.Name,
 		Phone:       c.Phone,
+		Email:       c.Email,
 		Reason:      c.Reason,
 		Attachments: c.Attachments,
 		IsRemove:    c.IsRemove,
@@ -309,6 +311,7 @@ func (d contactReqDoc) toDomain() domain.ContactRequest {
 		ID:          d.ID,
 		Name:        d.Name,
 		Phone:       d.Phone,
+		Email:       d.Email,
 		Reason:      d.Reason,
 		Attachments: d.Attachments,
 		IsRemove:    d.IsRemove,

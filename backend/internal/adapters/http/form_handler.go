@@ -48,6 +48,7 @@ func (s *Server) handleCreateQuote(w http.ResponseWriter, r *http.Request) {
 type contactRequest struct {
 	Name        string   `json:"name"`
 	Phone       string   `json:"phone"`
+	Email       string   `json:"email"`
 	Reason      string   `json:"reason"`
 	Attachments []string `json:"attachments"`
 }
@@ -59,7 +60,7 @@ func (s *Server) handleCreateContact(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	c, err := s.contacts.Create(r.Context(), ports.ContactInput{
-		Name: req.Name, Phone: req.Phone, Reason: req.Reason, Attachments: req.Attachments,
+		Name: req.Name, Phone: req.Phone, Email: req.Email, Reason: req.Reason, Attachments: req.Attachments,
 	})
 	if err != nil {
 		writeError(w, err)

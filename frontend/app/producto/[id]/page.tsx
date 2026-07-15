@@ -12,7 +12,7 @@ import { OPTS, type OptAxis } from '@/lib/opts';
 import { money } from '@/lib/format';
 import ProductImage from '@/components/ProductImage';
 import ProductCard from '@/components/ProductCard';
-import { IconArrowLeft, IconHeart } from '@/components/icons';
+import { IconArrowLeft, IconHeart, IconCube } from '@/components/icons';
 import { useFavorites } from '@/providers/FavoritesProvider';
 import type { Product, OptionSelection } from '@/lib/types';
 
@@ -86,38 +86,43 @@ export default function ProductPage() {
         {/* GALERÍA */}
         <div>
           <div style={{ position: 'relative' }}>
-            <ProductImage imageId={mainImage} alt={product.name} style={{ aspectRatio: '4 / 3.4', borderRadius: 20, border: '1px solid var(--alv-line)' }} />
-            {product.model3d?.glbId && (
-              <button
-                onClick={() =>
-                  openAr({
-                    glbUrl: modelUrl(product.model3d!.glbId),
-                    usdzUrl: product.model3d!.usdzId ? modelUrl(product.model3d!.usdzId) : undefined,
-                    posterUrl: product.model3d!.posterId
-                      ? imageUrl(product.model3d!.posterId)
-                      : mainImage
-                        ? imageUrl(mainImage)
-                        : undefined,
-                    name: product.name,
-                    alt: product.name,
-                  })
-                }
-                className="alv-btn-dark"
-                aria-label={t.pd_ar}
-                style={{ position: 'absolute', bottom: 14, right: 14, padding: '9px 16px', fontSize: 14 }}
-              >
-                AR
-              </button>
-            )}
+            <ProductImage imageId={mainImage} alt={product.name} fit="contain" style={{ aspectRatio: '4 / 3.4', borderRadius: 20, border: '1px solid var(--alv-line)' }} />
           </div>
           {product.imageIds.length > 1 && (
             <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>
               {product.imageIds.map((imgId, i) => (
                 <button key={imgId} onClick={() => setGalleryIdx(i)} style={{ padding: 0, border: i === galleryIdx ? '2px solid #d6a81f' : '1px solid var(--alv-line)', borderRadius: 12, overflow: 'hidden', cursor: 'pointer', background: 'none' }}>
-                  <ProductImage imageId={imgId} alt={`${product.name} ${i + 1}`} style={{ width: 68, height: 68 }} />
+                  <ProductImage imageId={imgId} alt={`${product.name} ${i + 1}`} fit="contain" style={{ width: 68, height: 68 }} />
                 </button>
               ))}
             </div>
+          )}
+          {/* Botón de AR: carga el modelo 3D de ESTE producto. Solo aparece si el
+              producto tiene un .glb subido (sin modelo no hay nada que mostrar). */}
+          {product.model3d?.glbId && (
+            <button
+              type="button"
+              onClick={() =>
+                openAr({
+                  glbUrl: modelUrl(product.model3d!.glbId),
+                  usdzUrl: product.model3d!.usdzId ? modelUrl(product.model3d!.usdzId) : undefined,
+                  posterUrl: product.model3d!.posterId
+                    ? imageUrl(product.model3d!.posterId)
+                    : mainImage
+                      ? imageUrl(mainImage)
+                      : undefined,
+                  name: product.name,
+                  alt: product.name,
+                })
+              }
+              style={{
+                marginTop: 14, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                gap: 10, padding: '15px 18px', borderRadius: 16, border: '1px solid var(--alv-line)',
+                background: '#fff', color: 'var(--alv-ink)', fontWeight: 600, fontSize: 15, cursor: 'pointer',
+              }}
+            >
+              <IconCube size={20} /> {t.pd_ar}
+            </button>
           )}
         </div>
 

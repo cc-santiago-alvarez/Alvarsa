@@ -148,13 +148,14 @@ type contactDTO struct {
 	ID          string   `json:"id"`
 	Name        string   `json:"name"`
 	Phone       string   `json:"phone"`
+	Email       string   `json:"email"`
 	Reason      string   `json:"reason"`
 	Attachments []string `json:"attachments"`
 }
 
 func toContactDTO(c domain.ContactRequest) contactDTO {
 	return contactDTO{
-		ID: c.ID, Name: c.Name, Phone: c.Phone, Reason: c.Reason,
+		ID: c.ID, Name: c.Name, Phone: c.Phone, Email: c.Email, Reason: c.Reason,
 		Attachments: emptyIfNil(c.Attachments),
 	}
 }

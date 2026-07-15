@@ -28,6 +28,7 @@ func (s *Contact) Create(ctx context.Context, in ports.ContactInput) (domain.Con
 		ID:          newID(),
 		Name:        strings.TrimSpace(in.Name),
 		Phone:       strings.TrimSpace(in.Phone),
+		Email:       strings.TrimSpace(in.Email),
 		Reason:      strings.TrimSpace(in.Reason),
 		Attachments: in.Attachments,
 		CreatedAt:   now,

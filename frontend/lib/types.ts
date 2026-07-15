@@ -91,6 +91,7 @@ export interface Quote extends QuoteRequest {
 export interface ContactRequestBody {
   name: string;
   phone: string;
+  email: string;
   reason: string;
   attachments: string[];
 }

@@ -9,11 +9,15 @@ export default function ProductImage({
   alt,
   className,
   style,
+  fit = 'cover',
 }: {
   imageId?: string;
   alt: string;
   className?: string;
   style?: React.CSSProperties;
+  // 'cover' (default) recorta para llenar el recuadro — ideal en cuadrículas.
+  // 'contain' muestra la imagen completa (con margen) — para el visor de la ficha.
+  fit?: 'cover' | 'contain';
 }) {
   const [failed, setFailed] = useState(false);
   const show = imageId && !failed;
@@ -29,7 +33,7 @@ export default function ProductImage({
           src={imageUrl(imageId!)}
           alt={alt}
           onError={() => setFailed(true)}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          style={{ width: '100%', height: '100%', objectFit: fit }}
         />
       ) : (
         <span
