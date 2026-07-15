@@ -12,11 +12,12 @@ import (
 // carrito); el listado es admin-only (lo protege el middleware en el adaptador).
 type Quote struct {
 	quotes ports.QuoteRepository
+	mailer ports.Mailer
 	now    func() time.Time
 }
 
-func NewQuote(quotes ports.QuoteRepository) *Quote {
-	return &Quote{quotes: quotes, now: time.Now}
+func NewQuote(quotes ports.QuoteRepository, mailer ports.Mailer) *Quote {
+	return &Quote{quotes: quotes, mailer: mailer, now: time.Now}
 }
 
 func (s *Quote) Create(ctx context.Context, in ports.QuoteInput) (domain.Quote, error) {
@@ -41,7 +42,15 @@ func (s *Quote) Create(ctx context.Context, in ports.QuoteInput) (domain.Quote, 
 		CreatedAt: now,
 		UpdatedAt: now,
 	}
-	return s.quotes.Create(ctx, q)
+	created, err := s.quotes.Create(ctx, q)
+	if err != nil {
+		return domain.Quote{}, err
+	}
+	// Notificación al taller: best-effort, un fallo no invalida la cotización.
+	if s.mailer != nil {
+		_ = s.mailer.SendQuoteNotification(ctx, created)
+	}
+	return created, nil
 }
 
 func (s *Quote) List(ctx context.Context) ([]domain.Quote, error) {

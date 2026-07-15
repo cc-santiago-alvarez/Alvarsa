@@ -13,7 +13,7 @@ export const DICT = {
     arband_kicker: 'Realidad aumentada', arband_title: 'Prueba cómo se vería en tu espacio ideal', arband_sub: 'Coloca cualquier pieza de Alvarsa en tu sala con la cámara de tu dispositivo y comprueba medidas, proporción y estilo antes de encargarla.', arband_cta: 'Probar con realidad aumentada',
     moment_kicker: 'Pieza del mes', moment_title: 'Nuestra selección', moment_sub: 'Piezas que definen el oficio del taller. Comodidad y estructura que envejecen bien.', moment_cta: 'Ver pieza',
     craft_quote: '"Si aguanta el peso del taller, aguanta toda una vida en tu casa."', craft_by: '— El equipo de Alvarsa',
-    footer_addr: 'Cra. 50 #38-24, Itagüí, Antioquia', footer_rights: '© 2026 Alvarsa. Todos los derechos reservados.',
+    footer_addr: 'Cll. 53A #48-14, Itagüí, Antioquia', footer_rights: '© 2026 Alvarsa. Todos los derechos reservados.',
     footer_l_email: 'Email', footer_l_phone: 'Teléfono', footer_contact: 'Contacto',
     catalog_title: 'Catálogo', catalog_sub: 'Todo se fabrica a pedido y se puede personalizar en materiales, acabados y medidas.', filter_all: 'Todo',
     results_one: 'pieza', results_many: 'piezas', empty_catalog: 'No hay piezas que coincidan con tu búsqueda.',

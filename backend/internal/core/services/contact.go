@@ -12,11 +12,12 @@ import (
 // Contact implementa ports.ContactService. Creación pública; listado admin-only.
 type Contact struct {
 	contacts ports.ContactRepository
+	mailer   ports.Mailer
 	now      func() time.Time
 }
 
-func NewContact(contacts ports.ContactRepository) *Contact {
-	return &Contact{contacts: contacts, now: time.Now}
+func NewContact(contacts ports.ContactRepository, mailer ports.Mailer) *Contact {
+	return &Contact{contacts: contacts, mailer: mailer, now: time.Now}
 }
 
 func (s *Contact) Create(ctx context.Context, in ports.ContactInput) (domain.ContactRequest, error) {
@@ -34,7 +35,15 @@ func (s *Contact) Create(ctx context.Context, in ports.ContactInput) (domain.Con
 		CreatedAt:   now,
 		UpdatedAt:   now,
 	}
-	return s.contacts.Create(ctx, c)
+	created, err := s.contacts.Create(ctx, c)
+	if err != nil {
+		return domain.ContactRequest{}, err
+	}
+	// Notificación al taller: best-effort, un fallo no invalida el contacto.
+	if s.mailer != nil {
+		_ = s.mailer.SendContactNotification(ctx, created)
+	}
+	return created, nil
 }
 
 func (s *Contact) List(ctx context.Context) ([]domain.ContactRequest, error) {

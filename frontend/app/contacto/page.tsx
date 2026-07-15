@@ -67,7 +67,7 @@ export default function ContactoPage() {
         {/* Contacto directo */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div className="alv-label">{t.contact_direct}</div>
-          <DirectRow k={t.footer_l_phone} v="+57 604 448 2009" href="tel:+576044482009" />
+          <DirectRow k={t.footer_l_phone} v="+57 302 602 3533" href="tel:+573026023533" />
           <DirectRow k={t.footer_l_email} v="taller@alvarsa.co" href="mailto:taller@alvarsa.co" />
           <div style={{ borderTop: '1px solid var(--alv-line)', paddingTop: 14 }}>
             <div style={{ color: '#141414', fontWeight: 600 }}>{t.footer_addr}</div>

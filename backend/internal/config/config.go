@@ -22,6 +22,11 @@ type Config struct {
 
 	SeedAdminEmail    string
 	SeedAdminPassword string
+
+	// Correo (Resend). Si ResendAPIKey está vacío, se usa un mailer noop.
+	ResendAPIKey string
+	MailFrom     string // remitente verificado, p. ej. "Alvarsa <no-reply@alvarsa.com>"
+	MailTo       string // casilla del taller que recibe las notificaciones
 }
 
 // Load lee la configuración. Intenta cargar un .env (silencioso si no existe) y
@@ -41,6 +46,10 @@ func Load() Config {
 		CookieSecure:      envBool("COOKIE_SECURE", false),
 		SeedAdminEmail:    env("SEED_ADMIN_EMAIL", "admin@alvarsa.com"),
 		SeedAdminPassword: env("SEED_ADMIN_PASSWORD", "admin123"),
+
+		ResendAPIKey: env("RESEND_API_KEY", ""),
+		MailFrom:     env("MAIL_FROM", "Alvarsa <onboarding@resend.dev>"),
+		MailTo:       env("MAIL_TO", env("SEED_ADMIN_EMAIL", "admin@alvarsa.com")),
 	}
 }
 

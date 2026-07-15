@@ -11,8 +11,10 @@ import (
 
 	"github.com/codecraftdev/alvarsa/internal/adapters/auth"
 	httpadapter "github.com/codecraftdev/alvarsa/internal/adapters/http"
+	"github.com/codecraftdev/alvarsa/internal/adapters/mail"
 	mongoadapter "github.com/codecraftdev/alvarsa/internal/adapters/mongo"
 	"github.com/codecraftdev/alvarsa/internal/config"
+	"github.com/codecraftdev/alvarsa/internal/core/ports"
 	"github.com/codecraftdev/alvarsa/internal/core/services"
 )
 
@@ -44,14 +46,24 @@ func main() {
 	modelStore := mongoadapter.NewModelStore(db)
 	hasher := auth.NewBcryptHasher(0)
 
+	// Correo: Resend si hay API key; si no, un noop que solo registra en el log.
+	var mailer ports.Mailer
+	if cfg.ResendAPIKey != "" {
+		mailer = mail.NewResend(cfg.ResendAPIKey, cfg.MailFrom, cfg.MailTo)
+		log.Printf("correo: Resend habilitado (from=%q to=%q)", cfg.MailFrom, cfg.MailTo)
+	} else {
+		mailer = mail.NewNoop()
+		log.Printf("correo: RESEND_API_KEY no configurada, notificaciones deshabilitadas (noop)")
+	}
+
 	// Servicios (casos de uso).
 	catalogSvc := services.NewCatalog(productRepo, categoryRepo)
 	authSvc := services.NewAuth(userRepo, sessionRepo, hasher, cfg.SessionTTL)
 	adminProdSvc := services.NewAdminProduct(productRepo, categoryRepo)
 	adminCatSvc := services.NewAdminCategory(categoryRepo)
 	adminUserSvc := services.NewAdminUser(userRepo, hasher)
-	quoteSvc := services.NewQuote(quoteRepo)
-	contactSvc := services.NewContact(contactRepo)
+	quoteSvc := services.NewQuote(quoteRepo, mailer)
+	contactSvc := services.NewContact(contactRepo, mailer)
 	imageSvc := services.NewImage(imageStore)
 	modelSvc := services.NewModel(modelStore)
 
